@@ -112,7 +112,13 @@ export function identifyClient(facts: ClientFacts): ClientIdentity {
   const known = byMetadataUrl ?? byRedirect ?? null;
   const via: RecognitionSource = byMetadataUrl ? 'metadata-url' : byRedirect ? 'redirect' : 'none';
 
-  const returnHost = parseUrl(facts.redirectUri)?.hostname ?? '';
+  const redirect = parseUrl(facts.redirectUri);
+  const returnHost = redirect?.hostname ?? '';
+  const returnsTo: ClientIdentity['returnsTo'] = isLoopbackRedirect(facts.redirectUri)
+    ? 'this-computer'
+    : redirect?.protocol === 'https:' || redirect?.protocol === 'http:'
+      ? 'website'
+      : 'device-app';
   const sentName = cleanName(metadata.client_name);
   const name = known ? known.name : sentName || returnHost;
 
@@ -145,6 +151,7 @@ export function identifyClient(facts: ClientFacts): ClientIdentity {
     via,
     family: known ? (known.family ?? known.id) : null,
     returnHost,
+    returnsTo,
     logo,
     logoUri,
     warnings,

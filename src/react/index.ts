@@ -16,6 +16,7 @@ export { themeStyle } from './theme.js';
 export type { ConnectApp, ConnectColors, ConnectTheme } from './theme.js';
 export {
   clientLabel,
+  returnPlace,
   ConsentView,
   DecisionView,
   ReturnView,

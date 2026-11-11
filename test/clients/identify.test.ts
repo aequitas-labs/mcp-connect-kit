@@ -33,6 +33,7 @@ describe('identifyClient', () => {
     expect(identity.via).toBe('metadata-url');
     expect(identity.name).toBe('ChatGPT');
     expect(identity.returnHost).toBe('chatgpt.com');
+    expect(identity.returnsTo).toBe('website');
     expect(identity.logo).toBe('metadata');
     expect(identity.logoUri).toBe('https://persistent.oaistatic.com/sonic/misc/openai-logo.png');
     expect(identity.warnings).toEqual([]);
@@ -73,6 +74,7 @@ describe('identifyClient', () => {
       },
     });
     expect(identity.warnings).toContain('localhost-only');
+    expect(identity.returnsTo).toBe('this-computer');
     // Gemini CLI's own name is not a claim on Google's brand.
     expect(identity.warnings).not.toContain('name-claims-known-brand');
     expect(identity.name).toBe('Gemini CLI MCP Client');

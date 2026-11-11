@@ -1,7 +1,7 @@
 {
   "name": "mcp-connect-kit",
   "version": "0.1.0",
-  "description": "A UI kit for MCP OAuth on custom MCP servers: recognise the connecting client (ChatGPT, Claude, Gemini, Codex, Cursor, VS Code) from facts it can't fake, fetch its metadata and logo safely, and show it on React sign-in and consent screens.",
+  "description": "Sign-in and consent screens for MCP servers that use OAuth, so people can see which app is asking for access before they allow it.",
   "license": "MIT",
   "type": "module",
   "repository": {

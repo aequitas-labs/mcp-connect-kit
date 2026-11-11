@@ -93,7 +93,7 @@ describe('ConsentView', () => {
     );
     expect(document.querySelector('[data-mcpc-mark] svg')?.innerHTML).not.toContain('9.205 8.658');
     expect(screen.getByRole('note').textContent).toBe(
-      'This app calls itself "ChatGPT", but Runhome can\'t confirm it. Only allow it if you added it yourself.',
+      'This app says it\'s "ChatGPT", but Runhome can\'t confirm that. Only allow it if you added it yourself.',
     );
   });
 
@@ -150,6 +150,7 @@ describe('ConsentView', () => {
     expect(screen.getAllByRole('note').map((note) => note.textContent)).toEqual([
       'This app runs on your computer. Only allow it if you started it.',
     ]);
+    expect(screen.getByText("You'll go back to an app on your computer.")).toBeTruthy();
   });
 
   it('calls onAllow and onDeny, and disables both while busy', () => {
@@ -199,6 +200,18 @@ describe('ConsentView', () => {
   });
 });
 
+describe('where the person goes back to', () => {
+  it('names an app that opens through its own URL scheme in words, not by its scheme host', () => {
+    const cursor = identifyClient({
+      clientId: 'dcr',
+      redirectUri: 'cursor://anysphere.cursor-mcp/oauth/callback',
+      clients: unverifiedClients,
+    });
+    consent(cursor);
+    expect(screen.getByText("You'll go back to an app on this device.")).toBeTruthy();
+  });
+});
+
 describe('the other screens', () => {
   it('SignInHeader names the client', () => {
     render(
@@ -213,7 +226,7 @@ describe('the other screens', () => {
 
   it('DecisionView says what happened, in plain words', () => {
     const outcomes: Record<'allowed' | 'denied' | 'failed', string> = {
-      allowed: 'ChatGPT is connected. Going back to chatgpt.com…',
+      allowed: 'ChatGPT is connected. Taking you back to chatgpt.com…',
       denied: "ChatGPT wasn't connected. You can close this page.",
       failed: "We couldn't connect ChatGPT. Go back to ChatGPT and try again.",
     };
