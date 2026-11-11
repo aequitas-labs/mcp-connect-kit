@@ -30,15 +30,17 @@ function NeutralIcon(): ReactElement {
 
 /**
  * The client's picture. In order: the logo from its metadata document,
- * served through your logo route; your mark for its id; the bundled mark; a
+ * served through your logo route; your mark for its id or family; the
+ * bundled mark for its family; a
  * plug icon. A client the kit didn't recognise always gets the plug, whatever
  * name it sent.
  */
 export function ClientMark({ client, logoSrc }: ClientMarkProps): ReactElement {
   const { marks } = useConnectSettings();
   const recognised = client.id !== null && client.via !== 'none';
-  const AppMark = recognised && marks ? marks[client.id ?? ''] : undefined;
-  const bundled = recognised && marks !== false ? BUNDLED_MARKS[client.id ?? ''] : undefined;
+  const AppMark =
+    recognised && marks ? (marks[client.id ?? ''] ?? marks[client.family ?? '']) : undefined;
+  const bundled = recognised && marks !== false ? BUNDLED_MARKS[client.family ?? ''] : undefined;
 
   let kind: 'logo' | 'mark' | 'neutral' = 'neutral';
   let picture: ReactElement = <NeutralIcon />;

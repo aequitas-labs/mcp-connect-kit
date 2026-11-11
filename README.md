@@ -136,9 +136,9 @@ There is no cache store to set up. Vercel and most CDNs keep the answer because 
 ## Sign-in and consent screens
 
 <p>
-  <img src="docs/screenshots/consent-chatgpt-light-375.png" width="250" alt="Consent screen for ChatGPT, in light mode">
-  <img src="docs/screenshots/consent-spoof-dark-375.png" width="250" alt="Consent screen for an app that calls itself ChatGPT, in dark mode, with a warning">
-  <img src="docs/screenshots/consent-local-light-375.png" width="250" alt="Consent screen for an app on this computer, with a warning">
+  <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-chatgpt-light-375.png" width="250" alt="Consent screen for ChatGPT, in light mode">
+  <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-spoof-dark-375.png" width="250" alt="Consent screen for an app that calls itself ChatGPT, in dark mode, with a warning">
+  <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-local-light-375.png" width="250" alt="Consent screen for an app on this computer, with a warning">
 </p>
 
 ```tsx
@@ -192,7 +192,7 @@ A client recognised by its metadata URL or redirect shows, in order: the logo fr
 <ConnectFrame theme={theme} marks={false}>…</ConnectFrame> {/* no bundled marks */}
 ```
 
-The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
+Marks go by client family, so Gemini CLI and the Gemini app share the Gemini mark. The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
 
 ## Licence
 
