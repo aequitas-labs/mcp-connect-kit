@@ -85,6 +85,52 @@ const document = readClientMetadata(json, {
 
 It throws a `ClientMetadataError` whose `code` is `invalid_client_metadata`.
 
+## Fetch documents and logos safely
+
+A client ID is a URL a stranger chose, so the server fetches it the careful way.
+
+```ts
+import { createMetadataFetcher } from 'mcp-connect-kit';
+import { nodeTransport } from 'mcp-connect-kit/node';
+
+const fetchMetadata = createMetadataFetcher(nodeTransport);
+const json = await fetchMetadata('https://chatgpt.com/oauth/client.json');
+```
+
+Every fetch:
+
+- uses HTTPS only, sends no cookies, and follows no redirects;
+- refuses private, loopback, link-local and other special-use addresses before connecting;
+- accepts only a `200` answer, within 3 seconds;
+- reads at most 5 KB for a document and 256 KB for a logo.
+
+`mcp-connect-kit/node` resolves every address a host has and connects only to an address it checked, so DNS can't change between the check and the connection. On Cloudflare Workers, leave the transport out: Workers can't reach private addresses, and the kit still refuses private IP literals and `localhost`.
+
+The fetcher keeps nothing. `@better-auth/cimd` already stores each document with its client.
+
+### The logo route
+
+The screens never load a vendor's logo directly. They load it from your own domain, through one route:
+
+```ts
+import { createLogoProxy, logoPath } from 'mcp-connect-kit';
+
+// app/oauth/client-logo/[hash]/route.ts
+export const GET = createLogoProxy(nodeTransport);
+
+// On the consent screen, when identifyClient returned logo: 'metadata'
+const src = await logoPath(client.logoUri); // /oauth/client-logo/<hash>?src=…
+```
+
+The route fetches a logo only from a host that an allowlisted client lists in `logoHosts`. It accepts PNG, JPEG or WebP, recognised by the file's first bytes rather than its declared type, so SVG, which can carry script, is refused. Images can be at most 1024 × 1024 pixels. The person's browser never contacts the vendor.
+
+| Answer      | Headers                                                                                                                                                 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The logo    | `Cache-Control: public, s-maxage=86400, stale-while-revalidate=86400`, `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'` |
+| A plug icon | The same, but `Cache-Control: public, s-maxage=600`, so a vendor's fix shows within 10 minutes                                                          |
+
+There is no cache store to set up. Vercel and most CDNs keep the answer because of `Cache-Control`. On Cloudflare Workers the route also uses the built-in `caches.default`.
+
 ## Licence
 
 MIT. Client names and logos belong to their owners. This project isn't affiliated with or endorsed by any of them.
