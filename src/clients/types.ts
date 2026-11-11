@@ -46,6 +46,12 @@ export interface KnownClient {
    * name doesn't count as claiming the brand.
    */
   readonly selfNames?: readonly string[];
+  /**
+   * The product family this client belongs to, which picks its mark and
+   * groups its names: `gemini` for both the Gemini app and Gemini CLI.
+   * Defaults to `id`.
+   */
+  readonly family?: string;
 }
 
 /** How the kit knows who the client is. */
@@ -80,6 +86,11 @@ export interface ClientIdentity {
   readonly name: string;
   /** How the kit knows. `none` means `name` is only what the client said. */
   readonly via: RecognitionSource;
+  /**
+   * The product family whose mark the screens may show, such as `gemini`.
+   * `null` unless the client was recognised from its metadata URL or redirect.
+   */
+  readonly family: string | null;
   /** The host the person returns to after deciding, from this request's redirect. */
   readonly returnHost: string;
   /** What to show as the client's picture. */
