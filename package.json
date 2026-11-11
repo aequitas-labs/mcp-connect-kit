@@ -1,0 +1,137 @@
+{
+  "name": "mcp-connect-kit",
+  "version": "0.1.0",
+  "description": "Recognise the MCP client that's connecting, show it safely on sign-in and consent screens, and keep MCP widget URIs working across deploys.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aequitas-labs/mcp-connect-kit.git"
+  },
+  "homepage": "https://github.com/aequitas-labs/mcp-connect-kit#readme",
+  "bugs": "https://github.com/aequitas-labs/mcp-connect-kit/issues",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "oauth",
+    "cimd",
+    "client-id-metadata-document",
+    "consent",
+    "mcp-apps"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "default": "./dist/node/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "default": "./dist/react/index.js"
+    },
+    "./tailwind.css": "./dist/react/tailwind.css",
+    "./react/styles.css": "./dist/react/styles.css",
+    "./widgets": {
+      "types": "./dist/widgets/index.d.ts",
+      "default": "./dist/widgets/index.js"
+    },
+    "./widgets/build": {
+      "types": "./dist/widgets/build.d.ts",
+      "default": "./dist/widgets/build.js"
+    },
+    "./better-auth": {
+      "types": "./dist/better-auth/index.d.ts",
+      "default": "./dist/better-auth/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && node scripts/build-css.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build",
+    "stories": "node stories/build.mjs",
+    "test:e2e": "pnpm build && pnpm stories && playwright test",
+    "prepublishOnly": "pnpm check"
+  },
+  "devDependencies": {
+    "@better-auth/cimd": "^1.7.20",
+    "@eslint/js": "^10.0.1",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/ext-apps": "^2.0.4",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/cli": "^4.3.5",
+    "@tailwindcss/postcss": "^4.3.5",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "better-auth": "^1.7.20",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.14.0",
+    "happy-dom": "^21.0.4",
+    "postcss": "^8.5.32",
+    "prettier": "^3.9.10",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^5.1.0",
+    "zod": "^4.6.7"
+  },
+  "packageManager": "pnpm@10.27.0",
+  "dependencies": {
+    "ipaddr.js": "^2.5.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@modelcontextprotocol/ext-apps": "^2.0.0",
+    "esbuild": ">=0.25",
+    "postcss": "^8.4",
+    "@tailwindcss/postcss": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "@modelcontextprotocol/server": {
+      "optional": true
+    },
+    "@modelcontextprotocol/ext-apps": {
+      "optional": true
+    },
+    "esbuild": {
+      "optional": true
+    },
+    "postcss": {
+      "optional": true
+    },
+    "@tailwindcss/postcss": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

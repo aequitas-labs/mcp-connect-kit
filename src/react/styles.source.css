@@ -1,0 +1,5 @@
+/* The built stylesheet for apps without Tailwind: the screens' classes and tokens, no global reset. */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import './tailwind.css';

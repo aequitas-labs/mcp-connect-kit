@@ -1,0 +1,70 @@
+/*
+ * The screens' colour tokens. A theme prop sets --mcpc-light-* and
+ * --mcpc-dark-*; these rules pick the active scheme. Override any --mcpc-*
+ * variable on .mcpc in your own CSS instead, if you prefer.
+ */
+.mcpc {
+  --mcpc-accent: var(--mcpc-light-accent, #2563eb);
+  --mcpc-accent-ink: var(--mcpc-light-accent-ink, #ffffff);
+  --mcpc-page: var(--mcpc-light-page, #f6f7f9);
+  --mcpc-surface: var(--mcpc-light-surface, #ffffff);
+  --mcpc-ink: var(--mcpc-light-ink, #111827);
+  --mcpc-muted: var(--mcpc-light-muted, #4b5563);
+  --mcpc-line: var(--mcpc-light-line, #e5e7eb);
+  --mcpc-warn-bg: var(--mcpc-light-warn-bg, #fef3c7);
+  --mcpc-warn-ink: var(--mcpc-light-warn-ink, #78350f);
+  --mcpc-radius: 12px;
+  --mcpc-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+
+.mcpc[data-mcpc-scheme='dark'] {
+  --mcpc-accent: var(--mcpc-dark-accent, var(--mcpc-light-accent, #60a5fa));
+  --mcpc-accent-ink: var(--mcpc-dark-accent-ink, var(--mcpc-light-accent-ink, #0b1220));
+  --mcpc-page: var(--mcpc-dark-page, #0b0f17);
+  --mcpc-surface: var(--mcpc-dark-surface, #111827);
+  --mcpc-ink: var(--mcpc-dark-ink, #f3f4f6);
+  --mcpc-muted: var(--mcpc-dark-muted, #9ca3af);
+  --mcpc-line: var(--mcpc-dark-line, #374151);
+  --mcpc-warn-bg: var(--mcpc-dark-warn-bg, #422006);
+  --mcpc-warn-ink: var(--mcpc-dark-warn-ink, #fde68a);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mcpc[data-mcpc-scheme='auto'] {
+    --mcpc-accent: var(--mcpc-dark-accent, var(--mcpc-light-accent, #60a5fa));
+    --mcpc-accent-ink: var(--mcpc-dark-accent-ink, var(--mcpc-light-accent-ink, #0b1220));
+    --mcpc-page: var(--mcpc-dark-page, #0b0f17);
+    --mcpc-surface: var(--mcpc-dark-surface, #111827);
+    --mcpc-ink: var(--mcpc-dark-ink, #f3f4f6);
+    --mcpc-muted: var(--mcpc-dark-muted, #9ca3af);
+    --mcpc-line: var(--mcpc-dark-line, #374151);
+    --mcpc-warn-bg: var(--mcpc-dark-warn-bg, #422006);
+    --mcpc-warn-ink: var(--mcpc-dark-warn-ink, #fde68a);
+    color-scheme: dark;
+  }
+}
+
+/* What Tailwind's preflight would do, scoped to the screens, for apps without it. */
+@layer base {
+  .mcpc :where(*, ::before, ::after) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  .mcpc :where(button) {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    cursor: pointer;
+  }
+  .mcpc :where(ul) {
+    list-style: none;
+  }
+  .mcpc :where(img, svg) {
+    display: block;
+    max-width: 100%;
+  }
+}
