@@ -1,0 +1,57 @@
+{
+  "name": "mcp-connect-kit",
+  "version": "0.0.0",
+  "description": "Recognise the MCP client that's connecting, show it safely on sign-in and consent screens, and keep MCP widget URIs working across deploys.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aequitas-labs/mcp-connect-kit.git"
+  },
+  "homepage": "https://github.com/aequitas-labs/mcp-connect-kit#readme",
+  "bugs": "https://github.com/aequitas-labs/mcp-connect-kit/issues",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "oauth",
+    "cimd",
+    "client-id-metadata-document",
+    "consent",
+    "mcp-apps"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.0.0",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^5.1.0"
+  },
+  "packageManager": "pnpm@10.27.0"
+}
