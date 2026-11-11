@@ -1,15 +1,55 @@
 # mcp-connect-kit
 
-Shared pieces for MCP servers that people connect to from ChatGPT, Claude, VS Code and other clients:
+Show people which AI app is connecting to your MCP server — ChatGPT, Claude, Gemini, Codex, Cursor or VS Code — on an OAuth consent screen that can't be fooled by a copied name, and keep your MCP Apps widgets opening after every deploy.
 
-- **Recognise the client** from facts the server can check (its metadata document URL or its redirect URI), never from the name it sends.
-- **Fetch client metadata documents and logos safely**, without reaching private addresses.
-- **Sign-in and consent screens** in React and Tailwind, which name the client, say where the person goes back to, and warn about apps the server can't confirm.
-- **Widget helpers** for MCP Apps and ChatGPT, where older template URIs keep working after a deploy.
+- **Recognises the client** from its client ID metadata document (CIMD) URL or its redirect URI, never from the name it sends.
+- **Fetches metadata documents and logos safely:** HTTPS only, no redirects, no private addresses.
+- **Ships sign-in and consent screens** for React, styled with Tailwind 4 or a built stylesheet, in light and dark.
+- **Keeps widget URIs working** for MCP Apps and the ChatGPT Apps SDK when a card's content hash changes.
+- **Works with Better Auth** (`@better-auth/oauth-provider`, `@better-auth/cimd`, `@better-auth/mcp`), on Node and Cloudflare Workers.
 
-The package is being built in small steps. It isn't on npm yet.
+## Install
 
-## Recognise the client
+```sh
+npm install mcp-connect-kit
+```
+
+React, `@modelcontextprotocol/server`, `@modelcontextprotocol/ext-apps`, `esbuild` and Tailwind are optional peers. Install the ones for the entry points you use.
+
+## Example: a consent screen
+
+```tsx
+import { identifyClient } from 'mcp-connect-kit';
+import { ConnectFrame, ConsentView } from 'mcp-connect-kit/react';
+
+const client = identifyClient({ clientId, redirectUri, metadata }); // from your OAuth server
+
+<ConnectFrame theme={{ app: { name: 'Runhome', logo: '/logo.svg' } }}>
+  <ConsentView
+    client={client}
+    scopes={[{ id: 'estimates:read', label: 'See your estimates' }]}
+    onAllow={allow}
+    onDeny={deny}
+  />
+</ConnectFrame>;
+```
+
+For ChatGPT this shows "Connect ChatGPT to Runhome" and "You'll go back to chatgpt.com." A client that only calls itself "ChatGPT" gets its name in quotes, a plug icon and a warning.
+
+## Entry points
+
+| Import                             | What it gives you                                                                                  |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `mcp-connect-kit`                  | `identifyClient`, the known clients, `readClientMetadata`, `createMetadataFetcher`, the logo route |
+| `mcp-connect-kit/node`             | `nodeTransport`: a fetch that connects only to public addresses it checked                         |
+| `mcp-connect-kit/react`            | `ConnectFrame`, `ConsentView`, `SignInHeader`, `DecisionView`, `ReturnView`                        |
+| `mcp-connect-kit/tailwind.css`     | The screens' tokens and classes for a Tailwind 4 app                                               |
+| `mcp-connect-kit/react/styles.css` | The built stylesheet for an app without Tailwind                                                   |
+| `mcp-connect-kit/widgets`          | `registerCards`, `cardToolMeta`, `defineCard` for MCP Apps and ChatGPT widgets                     |
+| `mcp-connect-kit/widgets/build`    | `buildCard`: one self-contained HTML file per card, named by its content                           |
+| `mcp-connect-kit/better-auth`      | `cimdOptions` for `@better-auth/cimd`, and `consentContext` for the consent page                   |
+
+## Recognise ChatGPT, Claude, Gemini and other MCP clients
 
 ```ts
 import { identifyClient, readClientMetadata } from 'mcp-connect-kit';
@@ -38,20 +78,22 @@ The kit decides who a client is from facts the server can check, strongest first
 | `localhost-only`          | The person goes back to an address on their own computer. Known native apps get it too, since any program can reuse their client ID. |
 | `logo-host-differs`       | A known client's document points its logo at a host its entry doesn't list. The kit shows its mark instead.                          |
 
-### The clients it knows
+### Clients it recognises
 
-| Client      | Known by                                                                                            | Logo in its document          |
-| ----------- | --------------------------------------------------------------------------------------------------- | ----------------------------- |
-| ChatGPT     | `https://chatgpt.com/oauth/client.json` (and `/oauth/{id}/client.json`), or its connector callbacks | on `persistent.oaistatic.com` |
-| Codex       | `https://chatgpt.com/oauth/codex/client.json`                                                       | on `persistent.oaistatic.com` |
-| Claude      | the callback `https://claude.ai/api/mcp/auth_callback`                                              | none                          |
-| Claude Code | `https://claude.ai/oauth/claude-code-client-metadata`                                               | none                          |
-| VS Code     | `https://vscode.dev/oauth/client-metadata.json` (and Insiders)                                      | on `code.visualstudio.com`    |
-| Gemini CLI  | its name only, so it stays unknown; its own name doesn't count as claiming Google's brand           | none                          |
+| Client      | Known by                                                                                              | Logo in its document          |
+| ----------- | ----------------------------------------------------------------------------------------------------- | ----------------------------- |
+| ChatGPT     | `https://chatgpt.com/oauth/client.json` (and `/oauth/{id}/client.json`), or its connector callbacks   | on `persistent.oaistatic.com` |
+| Codex       | `https://chatgpt.com/oauth/codex/client.json`                                                         | on `persistent.oaistatic.com` |
+| Claude      | the callback `https://claude.ai/api/mcp/auth_callback`                                                | none                          |
+| Claude Code | `https://claude.ai/oauth/claude-code-client-metadata`                                                 | none                          |
+| VS Code     | `https://vscode.dev/oauth/client-metadata.json` (and Insiders)                                        | on `code.visualstudio.com`    |
+| Gemini CLI  | its name only, so it stays unknown; its own name doesn't count as claiming Google's brand             | none                          |
+| Gemini app  | the Google callback `https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-…` (opt in) | none                          |
+| Cursor      | the callback `cursor://anysphere.cursor-mcp/oauth/callback` (opt in)                                  | none                          |
 
 Clients from one product share a `family`, which picks their mark: Gemini CLI and the Gemini app are both `gemini`. `identifyClient` returns the family only for a client it recognised, so a client known only by its name never gets a mark.
 
-The Gemini app and Cursor are in `unverifiedClients`. Their rules come from one walkthrough and from forum reports, and haven't been checked in a real sign-in yet. Opt in with `[...defaultClients, ...unverifiedClients]`.
+The Gemini app and Cursor are in `unverifiedClients`, not the defaults: their rules come from one walkthrough and from forum reports, and haven't been checked in a real sign-in yet. Opt in with `[...defaultClients, ...unverifiedClients]`.
 
 Add your own clients with `defineClient`. It refuses rules that would prove nothing, such as a loopback host or a plain HTTP redirect.
 
@@ -68,7 +110,7 @@ const acme = defineClient({
 identifyClient({ clientId, redirectUri, metadata, clients: [...defaultClients, acme] });
 ```
 
-## Read a client metadata document
+## Read a client ID metadata document (CIMD)
 
 `readClientMetadata` checks a fetched document against what your server offers, and normalises it:
 
@@ -87,9 +129,9 @@ const document = readClientMetadata(json, {
 
 It throws a `ClientMetadataError` whose `code` is `invalid_client_metadata`.
 
-## Fetch documents and logos safely
+## Fetch metadata documents without SSRF
 
-A client ID is a URL a stranger chose, so the server fetches it the careful way.
+With CIMD, the client ID is a URL a stranger chose, and your server fetches it. A careless fetch is a server-side request forgery (SSRF) hole.
 
 ```ts
 import { createMetadataFetcher } from 'mcp-connect-kit';
@@ -110,7 +152,7 @@ Every fetch:
 
 The fetcher keeps nothing. `@better-auth/cimd` already stores each document with its client.
 
-### The logo route
+### Serve client logos from your own domain
 
 The screens never load a vendor's logo directly. They load it from your own domain, through one route:
 
@@ -133,7 +175,7 @@ The route fetches a logo only from a host that an allowlisted client lists in `l
 
 There is no cache store to set up. Vercel and most CDNs keep the answer because of `Cache-Control`. On Cloudflare Workers the route also uses the built-in `caches.default`.
 
-## Sign-in and consent screens
+## OAuth sign-in and consent screens (React)
 
 <p>
   <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-chatgpt-light-375.png" width="250" alt="Consent screen for ChatGPT, in light mode">
@@ -164,7 +206,7 @@ import { ConnectFrame, ConsentView } from 'mcp-connect-kit/react';
 
 The screens always name the client and say where the person goes back to. A client the kit couldn't confirm is shown in quotes, with a plug icon and one warning line above the permissions. `SignInHeader` tops your own sign-in form. `DecisionView` and `ReturnView` say what happened.
 
-### Styling
+### Style with Tailwind 4 or plain CSS
 
 The screens are written in Tailwind 4 classes on the kit's own tokens (`bg-mcpc-accent`, `text-mcpc-ink`, `rounded-mcpc`, …), with light and dark sets.
 
@@ -194,7 +236,7 @@ A client recognised by its metadata URL or redirect shows, in order: the logo fr
 
 Marks go by client family, so Gemini CLI and the Gemini app share the Gemini mark. The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
 
-## Widgets
+## Keep MCP Apps and ChatGPT widget URIs working after a deploy
 
 Hosts cache a widget template by its URI, and keep the URIs they read when the connector was added. If a deploy changes a card's content hash, those hosts ask for a URI that no longer exists, and the card fails to open. The kit names each card by its content and keeps every earlier URI answering.
 
@@ -230,7 +272,7 @@ server.registerTool(
 
 `buildCard` needs `esbuild`, plus `postcss` and `@tailwindcss/postcss` when the stylesheet imports Tailwind. The registration helpers need `@modelcontextprotocol/server` and `@modelcontextprotocol/ext-apps`.
 
-## Better Auth
+## Use with Better Auth
 
 ```ts
 import { cimd } from '@better-auth/cimd';
@@ -244,6 +286,10 @@ const { client, logoSrc } = await consentContext({ client: oauthClient, redirect
 ```
 
 `cimdOptions` gives the plugin a transport that refuses private addresses and redirects. It also cuts each document's `grant_types` to the grants you offer, so a vendor adding a grant doesn't refuse the whole document. Discovery documents and token checks stay with `@better-auth/mcp`.
+
+## Node and Cloudflare Workers
+
+The core, the screens and the widget helpers run anywhere `fetch` and Web Crypto do. On Node, pass `nodeTransport` from `mcp-connect-kit/node`, so each connection is pinned to an address the kit checked. On Cloudflare Workers, leave the transport out; the logo route also uses `caches.default` there. `buildCard` runs at build time on Node.
 
 ## Licence
 

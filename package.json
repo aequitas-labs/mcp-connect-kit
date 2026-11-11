@@ -1,7 +1,7 @@
 {
   "name": "mcp-connect-kit",
   "version": "0.1.0",
-  "description": "Recognise the MCP client that's connecting, show it safely on sign-in and consent screens, and keep MCP widget URIs working across deploys.",
+  "description": "Recognise which AI client is connecting to your MCP server (ChatGPT, Claude, Gemini, Codex, Cursor, VS Code), show it on OAuth consent screens that a copied name can't fool, and keep MCP Apps widget URIs working across deploys.",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -13,11 +13,28 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
+    "mcp-server",
+    "mcp-oauth",
     "oauth",
+    "oauth2",
+    "consent-screen",
     "cimd",
     "client-id-metadata-document",
-    "consent",
-    "mcp-apps"
+    "dynamic-client-registration",
+    "ssrf",
+    "chatgpt",
+    "chatgpt-apps",
+    "openai-apps-sdk",
+    "claude",
+    "gemini",
+    "codex",
+    "cursor",
+    "vscode",
+    "mcp-apps",
+    "widgets",
+    "better-auth",
+    "react",
+    "tailwindcss"
   ],
   "engines": {
     "node": ">=20"
