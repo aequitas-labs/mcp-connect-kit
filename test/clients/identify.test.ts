@@ -194,6 +194,36 @@ describe('identifyClient', () => {
   });
 });
 
+describe('the Gemini family', () => {
+  it('maps Gemini CLI and the Gemini app to the same family, so they share a name family and mark', () => {
+    const geminiApp = identifyClient({
+      clientId: 'x',
+      redirectUri:
+        'https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-1-api_example_com',
+      clients: [...defaultClients, ...unverifiedClients],
+    });
+    expect(geminiApp).toMatchObject({ id: 'gemini-app', name: 'Gemini', family: 'gemini' });
+    expect(defaultClients.find((client) => client.id === 'gemini-cli')?.family).toBe('gemini');
+  });
+
+  it("still gives a Gemini CLI that is known only by name no family, so it can't earn the mark", () => {
+    const identity = identifyClient({
+      clientId: 'dcr_1',
+      redirectUri: 'http://127.0.0.1:53682/callback',
+      metadata: { client_name: 'Gemini CLI MCP Client' },
+    });
+    expect(identity).toMatchObject({ id: null, family: null, via: 'none' });
+  });
+
+  it('defaults a family to the client id', () => {
+    const identity = identifyClient({
+      clientId: 'https://chatgpt.com/oauth/client.json',
+      redirectUri: 'https://chatgpt.com/connector_platform_oauth_redirect',
+    });
+    expect(identity.family).toBe('chatgpt');
+  });
+});
+
 describe('defineClient', () => {
   it('accepts an app-specific client', () => {
     const acme = defineClient({

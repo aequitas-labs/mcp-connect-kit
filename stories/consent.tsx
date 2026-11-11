@@ -1,8 +1,8 @@
 // A consent screen for the browser checks and screenshots, picked by query string:
-// ?client=chatgpt|claude|unknown|spoof|local&scheme=light|dark&theme=default|green
+// ?client=chatgpt|claude|gemini|unknown|spoof|local&scheme=light|dark&theme=default|green
 import { createRoot } from 'react-dom/client';
 
-import { identifyClient } from '../src/index.js';
+import { defaultClients, identifyClient, unverifiedClients } from '../src/index.js';
 import type { ClientIdentity } from '../src/index.js';
 import { ConnectFrame, ConsentView } from '../src/react/index.js';
 import type { ConnectTheme } from '../src/react/index.js';
@@ -15,6 +15,12 @@ const clients: Record<string, ClientIdentity> = {
   claude: identifyClient({
     clientId: 'dcr_2',
     redirectUri: 'https://claude.ai/api/mcp/auth_callback',
+  }),
+  gemini: identifyClient({
+    clientId: 'gemini_1',
+    redirectUri:
+      'https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-1-api_runhome_example',
+    clients: [...defaultClients, ...unverifiedClients],
   }),
   unknown: identifyClient({
     clientId: 'dcr_3',

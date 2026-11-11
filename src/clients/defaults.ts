@@ -67,16 +67,19 @@ export const vscode: KnownClient = defineClient({
   brandNames: ['vscode', 'visualstudiocode', 'copilot'],
 });
 
+const GEMINI_BRAND: readonly string[] = ['gemini', 'google'];
+
 /**
- * Gemini CLI registers dynamically with a random localhost port, so nothing
- * proves who it is. It stays unrecognised; its own name just doesn't count as
- * claiming Google's brand.
+ * Gemini CLI, part of the Gemini family with the Gemini app. It registers
+ * dynamically with a random localhost port, so nothing proves who it is: it
+ * stays unrecognised, and its own name doesn't count as claiming Google's brand.
  */
 export const geminiCli: KnownClient = defineClient({
   id: 'gemini-cli',
   name: 'Gemini CLI',
+  family: 'gemini',
   selfNames: ['Gemini CLI MCP Client'],
-  brandNames: ['gemini', 'google'],
+  brandNames: GEMINI_BRAND,
 });
 
 /**
@@ -100,6 +103,7 @@ export const defaultClients: readonly KnownClient[] = [
 export const geminiApp: KnownClient = defineClient({
   id: 'gemini-app',
   name: 'Gemini',
+  family: 'gemini',
   redirects: [
     {
       host: 'oauth-redirect.googleusercontent.com',
@@ -107,7 +111,7 @@ export const geminiApp: KnownClient = defineClient({
       match: 'prefix',
     },
   ],
-  brandNames: ['gemini', 'google'],
+  brandNames: GEMINI_BRAND,
 });
 
 /**

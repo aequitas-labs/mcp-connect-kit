@@ -49,6 +49,8 @@ The kit decides who a client is from facts the server can check, strongest first
 | VS Code     | `https://vscode.dev/oauth/client-metadata.json` (and Insiders)                                      | on `code.visualstudio.com`    |
 | Gemini CLI  | its name only, so it stays unknown; its own name doesn't count as claiming Google's brand           | none                          |
 
+Clients from one product share a `family`, which picks their mark: Gemini CLI and the Gemini app are both `gemini`. `identifyClient` returns the family only for a client it recognised, so a client known only by its name never gets a mark.
+
 The Gemini app and Cursor are in `unverifiedClients`. Their rules come from one walkthrough and from forum reports, and haven't been checked in a real sign-in yet. Opt in with `[...defaultClients, ...unverifiedClients]`.
 
 Add your own clients with `defineClient`. It refuses rules that would prove nothing, such as a loopback host or a plain HTTP redirect.
@@ -134,9 +136,9 @@ There is no cache store to set up. Vercel and most CDNs keep the answer because 
 ## Sign-in and consent screens
 
 <p>
-  <img src="docs/screenshots/consent-chatgpt-light-375.png" width="250" alt="Consent screen for ChatGPT, in light mode">
-  <img src="docs/screenshots/consent-spoof-dark-375.png" width="250" alt="Consent screen for an app that calls itself ChatGPT, in dark mode, with a warning">
-  <img src="docs/screenshots/consent-local-light-375.png" width="250" alt="Consent screen for an app on this computer, with a warning">
+  <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-chatgpt-light-375.png" width="250" alt="Consent screen for ChatGPT, in light mode">
+  <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-spoof-dark-375.png" width="250" alt="Consent screen for an app that calls itself ChatGPT, in dark mode, with a warning">
+  <img src="https://raw.githubusercontent.com/aequitas-labs/mcp-connect-kit/pr-evidence/screens/consent-local-light-375.png" width="250" alt="Consent screen for an app on this computer, with a warning">
 </p>
 
 ```tsx
@@ -190,7 +192,7 @@ A client recognised by its metadata URL or redirect shows, in order: the logo fr
 <ConnectFrame theme={theme} marks={false}>…</ConnectFrame> {/* no bundled marks */}
 ```
 
-The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
+Marks go by client family, so Gemini CLI and the Gemini app share the Gemini mark. The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
 
 ## Widgets
 

@@ -4,19 +4,18 @@ import { pathToFileURL } from 'node:url';
 
 const page = (file: string, query: string): string =>
   `${pathToFileURL(`stories/dist/${file}`).href}?${query}`;
-// EVIDENCE=1 also writes the screenshots the README and PRs show.
-const evidence = process.env.EVIDENCE === '1';
+// Screenshots land in test-results/screens. Ones a PR shows go on the pr-evidence branch, never on main.
 
 async function shoot(browserPage: Page, name: string): Promise<void> {
   await browserPage.screenshot({
-    path: `${evidence ? 'docs/screenshots' : 'test-results/screens'}/${name}.png`,
+    path: `test-results/screens/${name}.png`,
     fullPage: true,
   });
 }
 
 test.describe('kit-screens:pres-phone — at 375 px, both buttons show with no sideways scroll, light and dark', () => {
   for (const scheme of ['light', 'dark'] as const) {
-    for (const client of ['chatgpt', 'unknown', 'spoof', 'local'] as const) {
+    for (const client of ['chatgpt', 'gemini', 'unknown', 'spoof', 'local'] as const) {
       test(`${client}, ${scheme}`, async ({ page: browserPage }) => {
         await browserPage.setViewportSize({ width: 375, height: 812 });
         await browserPage.goto(page('built.html', `client=${client}&scheme=${scheme}`));

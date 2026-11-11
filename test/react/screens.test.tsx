@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { identifyClient } from '../../src/index.js';
+import { defaultClients, identifyClient, unverifiedClients } from '../../src/index.js';
 import type { ClientIdentity } from '../../src/index.js';
 import {
   ConnectFrame,
@@ -113,6 +113,28 @@ describe('ConsentView', () => {
         <ConsentView client={claude} scopes={scopes} onAllow={vi.fn()} onDeny={vi.fn()} />
       </ConnectFrame>,
     );
+    expect(document.querySelector('[data-mcpc-mark]')?.getAttribute('data-mcpc-mark')).toBe(
+      'neutral',
+    );
+  });
+
+  it('shows the Gemini mark for the Gemini family, and the plug for a Gemini CLI known only by name', () => {
+    const geminiApp = identifyClient({
+      clientId: 'gemini_1',
+      redirectUri:
+        'https://oauth-redirect.googleusercontent.com/r/user_bound_custom-mcp-1-api_runhome_example',
+      clients: [...defaultClients, ...unverifiedClients],
+    });
+    consent(geminiApp);
+    expect(document.querySelector('[data-mcpc-mark]')?.getAttribute('data-mcpc-mark')).toBe('mark');
+    expect(document.querySelector('[data-mcpc-mark] svg')?.innerHTML).toContain('mcpc-gemini-');
+    cleanup();
+    const geminiCli = identifyClient({
+      clientId: 'dcr',
+      redirectUri: 'http://127.0.0.1:5000/cb',
+      metadata: { client_name: 'Gemini CLI MCP Client' },
+    });
+    consent(geminiCli);
     expect(document.querySelector('[data-mcpc-mark]')?.getAttribute('data-mcpc-mark')).toBe(
       'neutral',
     );

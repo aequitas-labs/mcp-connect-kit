@@ -55,6 +55,11 @@ export function defineClient(client: KnownClient): KnownClient {
     throw new KnownClientError(`Client id ${client.id} must be lowercase words joined by hyphens`);
   }
   if (!client.name.trim()) throw new KnownClientError(`${client.id}: name must not be empty`);
+  if (client.family !== undefined && !CLIENT_ID_PATTERN.test(client.family)) {
+    throw new KnownClientError(
+      `${client.id}: family ${client.family} must be lowercase words joined by hyphens`,
+    );
+  }
   if (!client.metadataUrls?.length && !client.redirects?.length && !client.selfNames?.length) {
     throw new KnownClientError(`${client.id}: needs a metadata URL, a redirect or a self name`);
   }

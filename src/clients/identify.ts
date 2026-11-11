@@ -139,5 +139,14 @@ export function identifyClient(facts: ClientFacts): ClientIdentity {
     }
   }
 
-  return { id: known?.id ?? null, name, via, returnHost, logo, logoUri, warnings };
+  return {
+    id: known?.id ?? null,
+    name,
+    via,
+    family: known ? (known.family ?? known.id) : null,
+    returnHost,
+    logo,
+    logoUri,
+    warnings,
+  };
 }

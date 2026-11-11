@@ -6,7 +6,7 @@ import type { ConnectCopy } from './copy.js';
 import { themeStyle } from './theme.js';
 import type { ConnectTheme } from './theme.js';
 
-/** Your own marks for known clients, keyed by client id. Each draws itself at 28 × 28 pixels. */
+/** Your own marks for known clients, keyed by client id or family (such as `gemini`). Each draws itself at 28 × 28 pixels. */
 export type ClientMarks = Readonly<Partial<Record<string, ComponentType>>>;
 
 /** What every screen inside a `ConnectFrame` shares. */
