@@ -1,0 +1,7 @@
+/* A Tailwind 4 app that uses the kit's tokens, with its own accent and no theme prop. */
+@import 'tailwindcss';
+@import '../dist/react/tailwind.css';
+
+@theme {
+  --color-mcpc-accent: #e11d48;
+}

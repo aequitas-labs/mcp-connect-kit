@@ -131,6 +131,67 @@ The route fetches a logo only from a host that an allowlisted client lists in `l
 
 There is no cache store to set up. Vercel and most CDNs keep the answer because of `Cache-Control`. On Cloudflare Workers the route also uses the built-in `caches.default`.
 
+## Sign-in and consent screens
+
+<p>
+  <img src="docs/screenshots/consent-chatgpt-light-375.png" width="250" alt="Consent screen for ChatGPT, in light mode">
+  <img src="docs/screenshots/consent-spoof-dark-375.png" width="250" alt="Consent screen for an app that calls itself ChatGPT, in dark mode, with a warning">
+  <img src="docs/screenshots/consent-local-light-375.png" width="250" alt="Consent screen for an app on this computer, with a warning">
+</p>
+
+```tsx
+import { ConnectFrame, ConsentView } from 'mcp-connect-kit/react';
+
+<ConnectFrame
+  theme={{
+    app: { name: 'Runhome', logo: '/logo.svg', icon: '/icon.svg' },
+    color: { accent: '#0b6' },
+    font: 'Inter, system-ui',
+    radius: 12,
+  }}
+>
+  <ConsentView
+    client={client} // from identifyClient
+    logoSrc={client.logo === 'metadata' ? await logoPath(client.logoUri) : undefined}
+    scopes={[{ id: 'estimates:read', label: 'See your estimates' }]}
+    onAllow={allow}
+    onDeny={deny}
+  />
+</ConnectFrame>;
+```
+
+The screens always name the client and say where the person goes back to. A client the kit couldn't confirm is shown in quotes, with a plug icon and one warning line above the permissions. `SignInHeader` tops your own sign-in form. `DecisionView` and `ReturnView` say what happened.
+
+### Styling
+
+The screens are written in Tailwind 4 classes on the kit's own tokens (`bg-mcpc-accent`, `text-mcpc-ink`, `rounded-mcpc`, …), with light and dark sets.
+
+- **A Tailwind 4 app** imports the kit after Tailwind, then points the tokens at its own colours, or passes a `theme`:
+
+  ```css
+  @import 'tailwindcss';
+  @import 'mcp-connect-kit/tailwind.css';
+
+  @theme {
+    --color-mcpc-accent: var(--color-brand);
+  }
+  ```
+
+- **An app without Tailwind** imports the built stylesheet: `import 'mcp-connect-kit/react/styles.css'`. It has no global reset; it only styles the screens.
+
+`colorScheme` is `auto` (follow the device), `light` or `dark`. Every string can be replaced through `copy`, and each part of the consent screen takes a class name through `classNames`.
+
+### Client marks
+
+A client recognised by its metadata URL or redirect shows, in order: the logo from its own metadata document (through your logo route), your mark for its id, the kit's bundled mark, or a plug icon. A client known only by its name always gets the plug.
+
+```tsx
+<ConnectFrame theme={theme} marks={{ chatgpt: MyOpenAiMark }}>…</ConnectFrame>
+<ConnectFrame theme={theme} marks={false}>…</ConnectFrame> {/* no bundled marks */}
+```
+
+The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
+
 ## Licence
 
-MIT. Client names and logos belong to their owners. This project isn't affiliated with or endorsed by any of them.
+MIT. Client names and logos belong to their owners. This project isn't affiliated with or endorsed by any of them. Visual Studio Code is a trademark of Microsoft Corporation.

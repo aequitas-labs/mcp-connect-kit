@@ -11,7 +11,8 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "jsx": "react-jsx"
   },
-  "include": ["src", "test", "*.config.ts"]
+  "include": ["src", "test", "stories", "*.config.ts"]
 }

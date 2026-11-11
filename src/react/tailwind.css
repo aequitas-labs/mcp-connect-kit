@@ -1,0 +1,25 @@
+/*
+ * mcp-connect-kit for Tailwind 4 apps. In your CSS, after Tailwind:
+ *
+ *   @import 'tailwindcss';
+ *   @import 'mcp-connect-kit/tailwind.css';
+ *
+ * Then point the tokens at your own colours, for example
+ * @theme { --color-mcpc-accent: var(--color-brand); }, or pass a theme prop.
+ */
+@import './tokens.css';
+@source './';
+
+@theme inline {
+  --color-mcpc-accent: var(--mcpc-accent);
+  --color-mcpc-accent-ink: var(--mcpc-accent-ink);
+  --color-mcpc-page: var(--mcpc-page);
+  --color-mcpc-surface: var(--mcpc-surface);
+  --color-mcpc-ink: var(--mcpc-ink);
+  --color-mcpc-muted: var(--mcpc-muted);
+  --color-mcpc-line: var(--mcpc-line);
+  --color-mcpc-warn-bg: var(--mcpc-warn-bg);
+  --color-mcpc-warn-ink: var(--mcpc-warn-ink);
+  --radius-mcpc: var(--mcpc-radius);
+  --font-mcpc: var(--mcpc-font);
+}
