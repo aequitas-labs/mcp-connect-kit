@@ -1,7 +1,7 @@
 {
   "name": "mcp-connect-kit",
   "version": "0.1.0",
-  "description": "Recognise which AI client is connecting to your MCP server (ChatGPT, Claude, Gemini, Codex, Cursor, VS Code), show it on OAuth consent screens that a copied name can't fool, and keep MCP Apps widget URIs working across deploys.",
+  "description": "A UI kit for MCP OAuth on custom MCP servers: recognise the connecting client (ChatGPT, Claude, Gemini, Codex, Cursor, VS Code) from facts it can't fake, fetch its metadata and logo safely, and show it on React sign-in and consent screens.",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -23,18 +23,16 @@
     "dynamic-client-registration",
     "ssrf",
     "chatgpt",
-    "chatgpt-apps",
-    "openai-apps-sdk",
     "claude",
     "gemini",
     "codex",
     "cursor",
     "vscode",
-    "mcp-apps",
-    "widgets",
     "better-auth",
     "react",
-    "tailwindcss"
+    "tailwindcss",
+    "oauth-consent",
+    "sign-in"
   ],
   "engines": {
     "node": ">=20"
@@ -57,14 +55,6 @@
     },
     "./tailwind.css": "./dist/react/tailwind.css",
     "./react/styles.css": "./dist/react/styles.css",
-    "./widgets": {
-      "types": "./dist/widgets/index.d.ts",
-      "default": "./dist/widgets/index.js"
-    },
-    "./widgets/build": {
-      "types": "./dist/widgets/build.d.ts",
-      "default": "./dist/widgets/build.js"
-    },
     "./better-auth": {
       "types": "./dist/better-auth/index.d.ts",
       "default": "./dist/better-auth/index.js"
@@ -92,12 +82,8 @@
   "devDependencies": {
     "@better-auth/cimd": "^1.7.20",
     "@eslint/js": "^10.0.1",
-    "@modelcontextprotocol/client": "^2.4.0",
-    "@modelcontextprotocol/ext-apps": "^2.0.4",
-    "@modelcontextprotocol/server": "^2.4.0",
     "@playwright/test": "^1.65.0",
     "@tailwindcss/cli": "^4.3.5",
-    "@tailwindcss/postcss": "^4.3.5",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^24.0.0",
     "@types/react": "^19.3.0",
@@ -106,45 +92,23 @@
     "esbuild": "^0.28.2",
     "eslint": "^10.14.0",
     "happy-dom": "^21.0.4",
-    "postcss": "^8.5.32",
     "prettier": "^3.9.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwindcss": "^4.3.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.72.2",
-    "vitest": "^5.1.0",
-    "zod": "^4.6.7"
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@10.27.0",
   "dependencies": {
     "ipaddr.js": "^2.5.0"
   },
   "peerDependencies": {
-    "react": ">=18",
-    "@modelcontextprotocol/server": "^2.0.0",
-    "@modelcontextprotocol/ext-apps": "^2.0.0",
-    "esbuild": ">=0.25",
-    "postcss": "^8.4",
-    "@tailwindcss/postcss": "^4.0.0"
+    "react": ">=18"
   },
   "peerDependenciesMeta": {
     "react": {
-      "optional": true
-    },
-    "@modelcontextprotocol/server": {
-      "optional": true
-    },
-    "@modelcontextprotocol/ext-apps": {
-      "optional": true
-    },
-    "esbuild": {
-      "optional": true
-    },
-    "postcss": {
-      "optional": true
-    },
-    "@tailwindcss/postcss": {
       "optional": true
     }
   },
