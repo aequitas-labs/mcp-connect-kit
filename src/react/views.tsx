@@ -10,6 +10,13 @@ export function clientLabel(client: ClientIdentity): string {
   return client.via === 'none' ? `"${client.name}"` : client.name;
 }
 
+/** Where the person goes back to, in words they'd recognise. */
+export function returnPlace(client: ClientIdentity, copy: ConnectCopy): string {
+  if (client.returnsTo === 'this-computer') return copy.thisComputer;
+  if (client.returnsTo === 'device-app') return copy.deviceApp;
+  return client.returnHost;
+}
+
 /**
  * The one warning line a screen shows, or `null`. A client on this computer
  * gets the "runs on your computer" line; otherwise a client whose name
@@ -116,7 +123,7 @@ export function ConsentView(props: ConsentViewProps): ReactElement {
         className={classes('text-sm text-mcpc-muted', parts.returnLine)}
         data-mcpc-return-host={props.client.returnHost}
       >
-        {copy.returnLine(props.client.returnHost)}
+        {copy.returnLine(returnPlace(props.client, copy))}
       </p>
       <div className="flex flex-col-reverse gap-3 sm:flex-row">
         <button
@@ -185,7 +192,7 @@ export function DecisionView(props: DecisionViewProps): ReactElement {
   const label = clientLabel(props.client);
   const message =
     props.outcome === 'allowed'
-      ? copy.connected(label, props.client.returnHost)
+      ? copy.connected(label, returnPlace(props.client, copy))
       : props.outcome === 'denied'
         ? copy.denied(label)
         : copy.failed(label);
@@ -219,7 +226,7 @@ export function ReturnView(props: ReturnViewProps): ReactElement {
   return (
     <section className="flex flex-col items-center gap-5 text-center">
       <ConnectionMarks client={props.client} logoSrc={props.logoSrc} />
-      <p role="status">{copy.connected(label, props.client.returnHost)}</p>
+      <p role="status">{copy.connected(label, returnPlace(props.client, copy))}</p>
       <a
         href={props.returnUrl}
         className="text-sm font-medium text-mcpc-accent underline underline-offset-4"

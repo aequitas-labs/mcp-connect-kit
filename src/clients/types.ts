@@ -93,6 +93,13 @@ export interface ClientIdentity {
   readonly family: string | null;
   /** The host the person returns to after deciding, from this request's redirect. */
   readonly returnHost: string;
+  /**
+   * Where that is: a `website`, an app listening on `this-computer`
+   * (a loopback redirect), or an app on the person's device that opens
+   * through its own URL scheme (`device-app`). The screens name the last two
+   * in words, since a host like `127.0.0.1` means nothing to most people.
+   */
+  readonly returnsTo: 'website' | 'this-computer' | 'device-app';
   /** What to show as the client's picture. */
   readonly logo: LogoSource;
   /** The logo URL to fetch through the logo route, when `logo` is `metadata`. */
