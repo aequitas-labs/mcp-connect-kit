@@ -192,6 +192,57 @@ A client recognised by its metadata URL or redirect shows, in order: the logo fr
 
 The bundled marks for ChatGPT, Codex, Claude, Claude Code, Gemini and Cursor come from [lobe-icons](https://github.com/lobehub/lobe-icons) (MIT). VS Code sends its own logo, so it has none. The marks stay their owners' trademarks. The kit shows one only to name the product that is really connecting.
 
+## Widgets
+
+Hosts cache a widget template by its URI, and keep the URIs they read when the connector was added. If a deploy changes a card's content hash, those hosts ask for a URI that no longer exists, and the card fails to open. The kit names each card by its content and keeps every earlier URI answering.
+
+```ts
+import { buildCard } from 'mcp-connect-kit/widgets/build';
+import { cardToolMeta, defineCard, registerCards } from 'mcp-connect-kit/widgets';
+
+// At build time: one self-contained HTML file, named ui://runhome/estimate-<revision>.html
+const estimate = await buildCard({
+  app: 'runhome',
+  name: 'estimate',
+  entry: 'src/estimate.tsx',
+  css: 'src/theme.css',
+  outDir: 'dist',
+});
+
+// On the server
+registerCards(server, [estimate], {
+  domain: 'https://cards.runhome.com',
+  csp: { connectDomains: ['https://api.runhome.com'] },
+});
+server.registerTool(
+  'get_estimate',
+  { title: 'Get an estimate', _meta: cardToolMeta(estimate) },
+  handler,
+);
+```
+
+- `resources/list` shows each card's current URI only.
+- An unlisted template, `ui://<app>/<name>-{revision}.html`, answers any earlier revision with the current HTML.
+- Resources use the MCP Apps type `text/html;profile=mcp-app`. Their `_meta` carries both `ui.csp` / `ui.domain` and ChatGPT's `openai/widget*` keys.
+- `cardToolMeta` sets `ui.resourceUri`, the older `ui/resourceUri`, and `openai/outputTemplate` to the same URI.
+
+`buildCard` needs `esbuild`, plus `postcss` and `@tailwindcss/postcss` when the stylesheet imports Tailwind. The registration helpers need `@modelcontextprotocol/server` and `@modelcontextprotocol/ext-apps`.
+
+## Better Auth
+
+```ts
+import { cimd } from '@better-auth/cimd';
+import { cimdOptions, consentContext } from 'mcp-connect-kit/better-auth';
+import { nodeTransport } from 'mcp-connect-kit/node';
+
+cimd({ ...cimdOptions({ ...nodeTransport, grants: ['authorization_code', 'refresh_token'] }) });
+
+// On the consent page, with Better Auth's stored client and this request's redirect
+const { client, logoSrc } = await consentContext({ client: oauthClient, redirectUri });
+```
+
+`cimdOptions` gives the plugin a transport that refuses private addresses and redirects. It also cuts each document's `grant_types` to the grants you offer, so a vendor adding a grant doesn't refuse the whole document. Discovery documents and token checks stay with `@better-auth/mcp`.
+
 ## Licence
 
 MIT. Client names and logos belong to their owners. This project isn't affiliated with or endorsed by any of them. Visual Studio Code is a trademark of Microsoft Corporation.
